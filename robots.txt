@@ -1,0 +1,13 @@
+## robots.txt
+
+## Bot : google, google-news, msnbot
+#
+#
+
+User-agent: *
+Allow: /folder
+Allow: /file
+Disallow: /folder/
+Disallow: /file/
+Disallow: /*.jpg$
+Sitemap: http://webneena.blogspot.com/sitemap.xml
