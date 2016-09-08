@@ -1,6 +1,5 @@
 /node_modules
 /public
-/vendor
 Homestead.yaml
 Homestead.json
 .env
