@@ -135,6 +135,9 @@ Route::get('admin/index4','Admin\IndexController@index4');
 /*----------  Banner  ----------*/
 
 Route::get('admin/banner','Admin\BannerController@index');
+Route::post('admin/banner/add','Admin\BannerController@add');
+Route::post('admin/banner/edit','Admin\BannerController@edit');
+Route::post('admin/banner/del','Admin\BannerController@del');
 
 /*----------  Book  ----------*/
 

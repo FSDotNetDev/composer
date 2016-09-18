@@ -69,7 +69,7 @@
 		<div class="col-lg-12">
 			<div class="ibox float-e-margins">
 				<div class="ibox-title">
-					<h5>สำนักพิมพ์</h5>
+					<h5>หนังสือ</h5>
 					<div class="ibox-tools">
 						<a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-wrench"></i></a>
@@ -93,7 +93,6 @@
 							<th>ประเภท</th>
 							<th>หมวดหมู่</th>
 							<th>จำนวนหน้า</th>
-							<th>ราคา</th>
 							<th>สถานะ</th>
 							<th>จัดการ</th>
 						</tr>
@@ -101,17 +100,16 @@
 						<tbody>
 						@foreach($book as $key => $value)
 						<tr class="gradeX">
-							<td align="center">{{ $value->book_id }}</td>
-							<td align="center"><img src="{{ URL::asset('media/book') }}/{{ $value->book_image }}" alt="{{ $value->book_name }}" style="width:80px;"></td>
-							<td>{{ $value->book_name }}</td>
-							<td>{{ $value->book_type }}</td>
-							<td>{{ $value->category_name }}</td>
-							<td align="center">{{ $value->book_page }}</td>
-							<td align="right">{{ $value->book_price }}</td>
-							<td align="center">{{ $value->book_status }}</td>
+							<td align="center">{{ $book[$key]['book_id'] }}</td>
+							<td align="center"><img src="{{ URL::asset('media/book') }}/{{ $book[$key]['book_image'] }}" alt="{{ $book[$key]['book_name'] }}" style="width:80px;"></td>
+							<td>{{ $book[$key]['book_name'] }}</td>
+							<td>{{ $book[$key]['book_type'] }}</td>
+							<td>{{ $book[$key]['category_name'] }}</td>
+							<td align="center">{{ $book[$key]['book_page'] }}</td>
+							<td align="center">{{ $book[$key]['book_status'] }}</td>
 							<td align="center">
 								<a href="{{ URL::to('admin/book/detail') }}"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
-								<a href="{{ URL::to('admin/book/edit') }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+								<a onclick="editRow('{{ $book[$key]['book_id'] }}', '{{ $book[$key]['book_name'] }}', '{{ $book[$key]['book_type'] }}', '{{ $book[$key]['category_name'] }}', '{{ $book[$key]['book_page'] }}', '{{ $book[$key]['book_status'] }}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
 								<a href="{{ URL::to('admin/book/delete') }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 							</td>
 						</tr>
@@ -125,54 +123,134 @@
 </div>
 
 <!-- set up the modal to start hidden and fade in and out -->
-<div id="myModal" class="modal fade">
+<div id="addModal" class="modal fade">
   	<div class="modal-dialog">
     	<div class="modal-content">
-      	<!-- dialog body -->
-      	<div class="modal-body">
-      		<label>Add Writer</label>
-        		<button type="button" class="close" data-dismiss="modal">&times;</button>
-      	</div>
-      	<!-- dialog buttons -->
-      	<div class="modal-footer">
-      		<div class="row">
-      			<div class="col-md-12">
-      				<form class="form-horizontal">
-      					<div class="form-group"><p class="col-md-3 control-label">ชื่อ</p>
-      						<div class="col-md-8"><input type="text" placeholder="อนุชิต" class="form-control"></div>
-      					</div>
-      					<div class="form-group"><p class="col-md-3 control-label">นามสกุล</p>
-								<div class="col-md-8"><input type="text" placeholder="คำน้อย" class="form-control"></div>
-      					</div>
-      					<div class="form-group"><p class="col-md-3 control-label">นามปากกา</p>
-      						<div class="col-md-8"><input type="text" placeholder="คิ้วต่ำ" class="form-control"></div>
-      					</div>
-      					<div class="form-group"><p class="col-md-3 control-label">ที่อยู่</p>
-      						<div class="col-md-8"><textarea class="form-control" rows="3" placeholder="ประเทศไทย"></textarea></div>
-      					</div>
-      					<div class="form-group"><p class="col-md-3 control-label">อีเมล์</p>
-								<div class="col-md-8"><input type="text" placeholder="@gmail.com" class="form-control"></div>
-      					</div>
-      					<div class="form-group"><p class="col-md-3 control-label">เบอร์โทรศัพท์</p>
-      						<div class="col-md-8"><input type="text" placeholder="xxxxxxxxxx" class="form-control"></div>
-      					</div>
-      					<div class="form-group"><p class="col-md-3 control-label">อัพโหลดรูปภาพ</p>
-      						<div class="col-md-3">
-      							<label title="Upload image file" for="inputImage" class="btn btn-primary pull-left">
-									<input type="file" accept="image/*" name="file" id="inputImage" class="hide">
-									Browse
-								</label>
-      						</div>
-						</div>
-      					<div class="form-group">      						
-      						<div class="col-md-11"><a onclick="nextBox();" class="btn btn-primary">Next</a></div>
-      					</div>
-      				</form>
-      			</div>
-      		</div>
-      		<!-- <a onclick="nextBox();" class="btn btn-primary">Next</a> -->
-      		<!-- <button type="button" class="btn btn-primary">OK</button> -->
-      	</div>
+	      	<!-- dialog body -->
+	      	<div class="modal-body">
+	      		<label>Add Book</label>
+	        		<button type="button" class="close" data-dismiss="modal">&times;</button>
+	      	</div>
+	      	<!-- dialog buttons -->
+	      	<div class="modal-footer">
+	      		<div class="row">
+	      			<div class="col-md-12">
+	      				<form class="form-horizontal" action="{{ URL::to('admin/book/add') }}" method="post">
+	      					<div class="form-group"><p class="col-md-3 control-label">ชื่อหนังสือ</p>
+	      						<div class="col-md-8"><input type="text" placeholder="Alure" class="form-control" name="name" autofocus=""></div>
+	      					</div>
+	      					<div class="form-group"><p class="col-md-3 control-label">ประเภท</p>
+								<div class="col-md-8">
+									<div class="text-left">
+		      							<select class="selectpicker" data-live-search="true" name="type">
+											<option data-tokens="">select</option>
+											<option data-tokens="book">หนังสือ</option>
+											<option data-tokens="mag">นิตยสาร</option>
+										</select>
+	      							</div>
+								</div>
+	      					</div>
+	      					<div class="form-group"><p class="col-md-3 control-label">หมวดหมู่</p>
+	      						<div class="col-md-8">
+	      							<div class="text-left">
+		      							<select class="selectpicker" data-live-search="true" name="category">
+											<option data-tokens="">select</option>
+											<option data-tokens="United States">United States</option>
+										</select>
+	      							</div>									
+	      						</div>
+	      					</div>
+	      					<div class="form-group"><p class="col-md-3 control-label">จำนวนหน้า</p>
+	      						<div class="col-md-8"><input type="text" placeholder="1" class="form-control" name="page"></div>
+	      					</div>
+	      					<input type="hidden" name="_token" value="{{ csrf_token() }}">
+	      					<div class="form-group"><p class="col-md-3 control-label">อัพโหลดรูปภาพ</p>
+	      						<div class="col-md-3">
+	      							<label title="Upload image file" for="inputImage" class="btn btn-info pull-left">
+										<input type="file" accept="image/*" name="file" id="inputImage" class="hide">
+										Browse
+									</label>
+	      						</div>
+							</div>
+	      					<div class="form-group">
+	      						<div class="text-right">
+	      							<div class="col-md-11">
+	      								<button type="reset" class="btn btn-white">reset</button>
+	      								<button type="submit" class="btn btn-info">submit</button>
+	      							</div>
+	      						</div>
+	      					</div>
+	      				</form>
+	      			</div>
+	      		</div>
+	      	</div>
+    	</div>
+  	</div>
+</div>
+
+<!-- set up the modal to start hidden and fade in and out -->
+<div id="editModal" class="modal fade">
+  	<div class="modal-dialog">
+    	<div class="modal-content">
+	      	<!-- dialog body -->
+	      	<div class="modal-body">
+	      		<label>Edit Book</label>
+	        		<button type="button" class="close" data-dismiss="modal">&times;</button>
+	      	</div>
+	      	<!-- dialog buttons -->
+	      	<div class="modal-footer">
+	      		<div class="row">
+	      			<div class="col-md-12">
+	      				<form class="form-horizontal" action="{{ URL::to('admin/book/add') }}" method="post">
+	      					<div class="form-group"><p class="col-md-3 control-label">ชื่อหนังสือ</p>
+	      						<div class="col-md-8"><input type="text" placeholder="Alure" class="form-control" name="name" id="name" autofocus=""></div>
+	      					</div>
+	      					<div class="form-group"><p class="col-md-3 control-label">ประเภท</p>
+								<div class="col-md-8">
+									<div class="text-left">
+		      							<select class="selectpicker" data-live-search="true" name="type" id="type">
+											<option data-tokens="">select</option>
+											<option data-tokens="book">หนังสือ</option>
+											<option data-tokens="mag">นิตยสาร</option>
+										</select>
+	      							</div>
+								</div>
+	      					</div>
+	      					<div class="form-group"><p class="col-md-3 control-label">หมวดหมู่</p>
+	      						<div class="col-md-8">
+	      							<div class="text-left">
+		      							<select class="selectpicker" data-live-search="true" name="category" id="category">
+											<option data-tokens="">select</option>
+											<option data-tokens="United States">United States</option>
+										</select>
+	      							</div>									
+	      						</div>
+	      					</div>
+	      					<div class="form-group"><p class="col-md-3 control-label">จำนวนหน้า</p>
+	      						<div class="col-md-8"><input type="text" placeholder="1" class="form-control" name="page" id="page"></div>
+	      					</div>
+	      					<input type="hidden" name="id" id="id">
+	      					<input type="hidden" name="_token" value="{{ csrf_token() }}">
+	      					<div class="form-group"><p class="col-md-3 control-label">อัพโหลดรูปภาพ</p>
+	      						<div class="col-md-3">
+	      							<label title="Upload image file" for="inputImage" class="btn btn-info pull-left">
+										<input type="file" accept="image/*" name="file" id="inputImage" class="hide">
+										Browse
+									</label>
+	      						</div>
+							</div>
+	      					<div class="form-group">
+	      						<div class="text-right">
+	      							<div class="col-md-11">
+	      								<button type="reset" class="btn btn-white">reset</button>
+	      								<button type="submit" class="btn btn-info">submit</button>
+	      							</div>
+	      						</div>
+	      					</div>
+	      				</form>
+	      			</div>
+	      		</div>
+	      	</div>
     	</div>
   	</div>
 </div>
@@ -221,11 +299,30 @@
 <!-- Bootbox Add New Row -->
 <script>
 	function addRow() {
-	   $("#myModal").modal({			// wire up the actual modal functionality and show the dialog
-      	"backdrop"  : "static",
-      	"keyboard"  : true,
-      	"show"      : true			// ensure the modal is shown immediately
-   	});
+	   	$("#addModal").modal({			// wire up the actual modal functionality and show the dialog
+	      	"backdrop"  : "static",
+	      	"keyboard"  : true,
+	      	"show"      : true			// ensure the modal is shown immediately
+	   	});
 	}
+</script>
+<!-- Bootbox Edit Row -->
+<script>
+	function editRow(id, name, type, category, page, status) {
+		$('#id').val(id);
+		$('#name').val(name);
+		$('#type').val(type);
+		$('#category').val(category);
+		$('#page').val(page);
+		// $('#status').val(status);
+	   	$("#editModal").modal({			// wire up the actual modal functionality and show the dialog
+	      	"backdrop"  : "static",
+	      	"keyboard"  : true,
+	      	"show"      : true			// ensure the modal is shown immediately
+	   	});
+	}
+</script>
+<script>
+	
 </script>
 @stop

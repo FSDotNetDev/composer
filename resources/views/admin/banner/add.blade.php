@@ -115,8 +115,8 @@
 							<td>{{ $banner[$key]['user_name'] }}</td>
 							<td style="width:50px;" align="center">
 								<a href="{{ URL::to('admin/banner/detail') }}"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
-								<a onclick="editRow('{{ $banner[$key]['banner_id'] }}', '{{ $banner[$key]['banner_name'] }}', '{{ $banner[$key]['banner_title'] }}', '{{ $banner[$key]['banner_link'] }}');"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-								<a onclick="delRow('{{ $banner[$key]['banner_id'] }}')"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+								<a onclick="editRow('{{ $banner[$key]['banner_name'] }}', '{{ $banner[$key]['banner_title'] }}', '{{ $banner[$key]['banner_link'] }}');"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+								<a href="{{ URL::to('admin/banner/delete') }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 							</td>
 						</tr>
 						@endforeach
@@ -141,9 +141,9 @@
 			<div class="modal-footer">
 				<div class="row">
 					<div class="col-md-12">
-						<form class="form-horizontal" action="{{ URL::to('admin/banner/add') }}" method="post">
+						<form class="form-horizontal" action="{{ URL::to('admin/edit/book') }}" method="post">
 							<div class="form-group"><p class="col-md-3 control-label">ชื่อแบนเนอร์</p>
-								<div class="col-md-8"><input type="text" class="form-control" placeholder="Europe" name="name" autofocus=""></div>
+								<div class="col-md-8"><input type="text" class="form-control" placeholder="Europe" name="name"></div>
 							</div>
 							<div class="form-group"><p class="col-md-3 control-label">หัวข้อ</p>
 								<div class="col-md-8"><textarea class="form-control" rows="3" placeholder="ท่องเที่ยวยุโรป เมืองในฝัน" name="title"></textarea></div>
@@ -159,7 +159,6 @@
 									</label>
 								</div>
 							</div>
-							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 							<div class="form-group">
 								<div class="text-right">
 									<div class="col-md-11">
@@ -189,9 +188,9 @@
 			<div class="modal-footer">
 				<div class="row">
 					<div class="col-md-12">
-						<form class="form-horizontal" action="{{ URL::to('admin/banner/edit') }}" method="post">
+						<form class="form-horizontal" action="{{ URL::to('admin/edit/book') }}" method="post">
 							<div class="form-group"><p class="col-md-3 control-label">ชื่อแบนเนอร์</p>
-								<div class="col-md-8"><input type="text" class="form-control" placeholder="Europe" name="name" id="name" autofocus></div>
+								<div class="col-md-8"><input type="text" class="form-control" placeholder="Europe" name="name" id="name"></div>
 							</div>
 							<div class="form-group"><p class="col-md-3 control-label">หัวข้อ</p>
 								<div class="col-md-8"><textarea class="form-control" rows="3" placeholder="ท่องเที่ยวยุโรป เมืองในฝัน" name="title" id="title"></textarea></div>
@@ -207,8 +206,6 @@
 									</label>
 								</div>
 							</div>
-							<input type="hidden" name="id" id="id">
-							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 							<div class="form-group">
 								<div class="text-right">
 									<div class="col-md-11">
@@ -291,8 +288,7 @@
 </script>
 <!-- Bootbox Edit Row -->
 <script>
-	function editRow(id, name, title, link) {
-		$('#id').val(id);
+	function editRow(name, title, link) {
 		$('#name').val(name);
 		$('#title').val(title);
 		$('#link').val(link);
@@ -303,24 +299,10 @@
 		});
 	}
 </script>
-<!-- Ajax Delete Row -->
+<!-- Confirm Delete -->
 <script>
-	function delRow(id) {		
-		if (confirm('Do you really want to leave?') == true) {
-			$.ajax({
-				type: 	'POST',
-				url: 	'{{ URL::to("admin/banner/del") }}',
-				data: 	{id: id},
-				success: function(response) {
-					if (respone == 'true') {
-						// window.location.reload();
-						alert('yes');
-					}				
-				}
-			});			
-		} else {
-
-		}
-	}	
+	$("a").click(function(event) {
+		window.confirm("Do you really want to leave?")
+	});
 </script> 
 @stop

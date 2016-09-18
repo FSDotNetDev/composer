@@ -29,10 +29,25 @@ class BookController extends Controller
 		->join('category', 'category.category_id', '=', 'book.category_id')
 		->where('book.book_status', '=', '1')
 		->orderBy('book.book_id', 'desc')
-		->take('3000')
+		->take('500')
 		->get();
 
-		return (Session::has('user_id') ? View::make('admin.book.index')->with('book', $book) : Redirect::to('admin/login'));
+		foreach ($book as $key => $value) {
+			
+			$node[$key] = array(
+				'book_id'		=> $value->book_id,
+				'book_image'	=> $value->book_image,
+				'book_name'		=> $value->book_name,
+				'book_type'		=> $value->book_type,
+				'category_name' => $value->category_name,
+				'book_page'		=> $value->book_page,
+				'book_price'	=> $value->book_price,
+				'book_status'	=> $value->book_status
+			);
+
+		}
+
+		return (Session::has('user_id') ? View::make('admin.book.index')->with('book', $node) : Redirect::to('admin/login'));
 
 	}
 

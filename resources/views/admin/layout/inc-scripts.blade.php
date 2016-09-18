@@ -139,3 +139,7 @@
 <script type="text/javascript" src="{{asset('/assets/js/plugins/dataTables/dataTables.bootstrap.js')}}"></script>
 <script type="text/javascript" src="{{asset('/assets/js/plugins/dataTables/dataTables.responsive.js')}}"></script>
 <script type="text/javascript" src="{{asset('/assets/js/plugins/dataTables/dataTables.tableTools.min.js')}}"></script>
+
+<!-- Select -->
+
+<script type="text/javascript" src="{{asset('/assets/js/plugins/select/bootstrap-select.min.js')}}"></script>

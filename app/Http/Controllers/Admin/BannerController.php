@@ -46,4 +46,66 @@ class BannerController extends Controller
 		return (Session::has('user_id') ? View::make('admin.banner.index')->with('banner', $node) : Redirect::to('admin/login'));
 
 	}
+
+	public function add()
+	{
+		$name 	= Input::get('name');
+		$title 	= Input::get('title');
+		$link 	= Input::get('link');
+
+		try {
+
+			$addBanner = DB::table('banner')->insertGetId(array(
+				'banner_name'	=> $name,
+				'banner_title'	=> $title,
+				'banner_link'	=> $link,
+				'user_update'	=> Session::get('user_id') 
+			));
+			
+		} catch (Exception $e) {
+			return 'false';
+		}
+
+		return (Session::has('user_id') ? Redirect::to('admin/banner') : Redirect::to('admin/login'));
+	}
+
+	public function edit()
+	{
+		$id 	= Input::get('id');
+		$name 	= Input::get('name');
+		$title 	= Input::get('title');
+		$link 	= Input::get('link');
+
+		try {
+
+			$editBanner = DB::table('banner')
+			->where('banner_id', '=', $id)
+			->update(array(
+				'banner_name'	=> $name,
+				'banner_title'	=> $title,
+				'banner_link'	=> $link,
+				'user_update'	=> Session::get('user_id')
+			));
+			
+		} catch (Exception $e) {
+			return 'false';
+		}
+
+		return (Session::has('user_id') ? Redirect::to('admin/banner') : Redirect::to('admin/login'));
+	}
+
+	public function del()
+	{
+		/*$id = Input::get('id');
+
+		try {
+
+			$delete = DB::table('banner')->where('banner_id', '=', $id)->delete();
+			
+		} catch (Exception $e) {
+			
+		}*/
+
+		return 'true';
+	}
 }

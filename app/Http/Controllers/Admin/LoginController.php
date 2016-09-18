@@ -21,13 +21,13 @@ class LoginController extends Controller
 
 	public function check()
 	{
-		$user_login = Input::get('user_login');
-		$user_password = Input::get('user_password');
+		$username = Input::get('user_login');
+		$password = Input::get('user_password');
 		
 		$login = DB::table('user')->select(DB::raw('*, authority.authority_name'))
 		->leftjoin('authority', 'authority.authority_id', '=', 'user.authority_id')
-		->where('user.user_login', '=', trim($user_login))
-		->where('user.User_password', '=', sha1(trim($user_password)))
+		->where('user.user_login', '=', trim($username))
+		->where('user.User_password', '=', sha1(trim($password)))
 		->where('user.authority_id', '!=', '3')
 		->get();
 

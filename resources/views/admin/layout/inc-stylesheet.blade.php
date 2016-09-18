@@ -41,3 +41,4 @@
 <link href="{{asset('/assets/css/plugins/dropzone/dropzone.css')}}" rel="stylesheet">
 
 <link href="{{asset('/assets/css/plugins/steps/jquery.steps.css')}}" rel="stylesheet">
+<link href="{{asset('/assets/css/plugins/select/bootstrap-select.min.css')}}" rel="stylesheet">
