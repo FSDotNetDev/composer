@@ -57,36 +57,45 @@ class CategoryController extends Controller
 		return $book;
 	}
 
-	public function insert()
+	public function add()
 	{
-		$category_name = Input::get('name');
-		$category_surname = Input::get('eng');
+		$name 	= Input::get('name');
+		$eng 	= Input::get('eng');
 
-		$check = DB::table('category')->select(DB::raw('category_id'))
-		->where('category_name', 'like', '%'.$category_name.'%')
-		->where('category_surname', 'like', '%'.$category_surname.'%')
-		->get();
+		try {
 
-		if ($check) {
-
-		 	return Redirect::to('admin/category');
-
-		} else {
-
-			$upCategory = DB::table('category')->insert(array(
-				'category_name'		=> $category_name,
-				'category_surname'	=> $category_surname,
+			$addCategory = DB::table('category')->insertGetId(array(
+				'category_name'		=> $name,
+				'category_surname'	=> $eng,
 				'user_update'		=> Session::get('user_id')
 			));
+			
+		} catch (Exception $e) {
+			return 'false';
+		}
 
-			return Redirect::to('admin/category');
-		} 
-		// return "URL::to('admin/index')";
+		return (Session::has('user_id') ? Redirect::to('admin/category') : Redirect::to('admin/login'));
 	}
 
 	public function edit()
 	{
-		return 'a';
+		$name 	= Input::get('name');
+		$eng	= Input::get('eng');
+		$id 	= Input::get('id');
+
+		try {
+
+			$editCategory = DB::table('category')->where('category_id', '=', $id)->update(array(
+				'category_name'		=> $name,
+				'category_surname'	=> $eng,
+				'user_update'		=> Session::get('user_id')
+			));
+			
+		} catch (Exception $e) {
+			return 'false';
+		}
+		
+		return (Session::has('user_id') ? Redirect::to('admin/category') : Redirect::to('admin/login'));
 	}
 
 	public function update()

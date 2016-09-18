@@ -150,15 +150,16 @@ Route::post('admin/book/delete','Admin\BookController@delete');
 /*----------  Category  ----------*/
 
 Route::get('admin/category','Admin\CategoryController@index');
-Route::post('admin/category/insert','Admin\CategoryController@insert');
+Route::post('admin/category/add','Admin\CategoryController@add');
+Route::post('admin/category/edit','Admin\CategoryController@edit');
+Route::post('admin/category/del','Admin\CategoryController@del');
 
 /*----------  Publisher  ----------*/
 
 Route::get('admin/publisher','Admin\PublisherController@index');
-Route::get('admin/publisher/edit','Admin\PublisherController@edit');
-Route::post('admin/publisher/insert','Admin\PublisherController@insert');
-Route::post('admin/publisher/update','Admin\PublisherController@update');
-Route::post('admin/publisher/delete','Admin\PublisherController@delete');
+Route::post('admin/publisher/add','Admin\PublisherController@add');
+Route::post('admin/publisher/edit','Admin\PublisherController@edit');
+Route::post('admin/publisher/del','Admin\PublisherController@del');
 
 /*----------  SMS  ----------*/
 

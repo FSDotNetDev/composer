@@ -113,7 +113,7 @@
 							<td>{{ $category[$key]['user_name'] }}</td>
 							<td style="width:50px;" align="center">
 								<a href="{{ URL::to('admin/category/detail') }}"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
-								<a onclick="editRow('{{ $category[$key]['category_name'] }}', '{{ $category[$key]['category_surname'] }}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+								<a onclick="editRow('{{ $category[$key]['category_id'] }}', '{{ $category[$key]['category_name'] }}', '{{ $category[$key]['category_surname'] }}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
 								<a href="{{ URL::to('admin/category/delete') }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 							</td>
 						</tr>
@@ -139,19 +139,27 @@
 			<div class="modal-footer">
 				<div class="row">
 					<div class="col-md-12">
-						<form class="form-horizontal" action="{{ URL::to('admin/category/insert') }}" method="post">
+						<form class="form-horizontal" action="{{ URL::to('admin/category/add') }}" method="post">
 							<div class="form-group"><p class="col-md-3 control-label">ชื่อหมวดหมู่</p>
 								<div class="col-md-8"><input type="text" class="form-control" placeholder="นวนิยาย" name="name"></div>
 							</div>
 							<div class="form-group"><p class="col-md-3 control-label">ชื่อภาษาอังกฤษ</p>
 								<div class="col-md-8"><input type="text" class="form-control" placeholder="Novel" name="eng"></div>
 							</div>
+							<div class="form-group"><p class="col-md-3 control-label"></p>
+								<div class="col-md-8">
+									<div class="image-crop" style="display: none">
+										<img src="{{asset('/assets/img/p3.jpg')}}">
+									</div>
+									<div class="img-preview img-preview-sm"></div>
+								</div>
+							</div>
 							<div class="form-group"><p class="col-md-3 control-label">อัพโหลดรูปภาพ</p>
 								<div class="col-md-3">
 									<label title="Upload image file" for="inputImage" class="btn btn-info pull-left">
-										<input type="file" accept="image/*" name="file" id="inputImage" class="hide">
+										<input type="file" accept="image/*" name="image" id="inputImage" class="hide">
 										Browse
-									</label>
+									</label>								
 								</div>
 							</div>
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -166,8 +174,6 @@
 						</form>
 					</div>
 				</div>
-				<!-- <a onclick="nextBox();" class="btn btn-primary">Next</a> -->
-				<!-- <button type="button" class="btn btn-primary">OK</button> -->
 			</div>
 		</div>
 	</div>
@@ -186,21 +192,30 @@
 			<div class="modal-footer">
 				<div class="row">
 					<div class="col-md-12">
-						<form class="form-horizontal" action="{{ URL::to('admin/category/update') }}" method="post">
+						<form class="form-horizontal" action="{{ URL::to('admin/category/edit') }}" method="post">
 							<div class="form-group"><p class="col-md-3 control-label">ชื่อหมวดหมู่</p>
 								<div class="col-md-8"><input type="text" class="form-control" placeholder="นวนิยาย" name="name" id="name"></div>
 							</div>
 							<div class="form-group"><p class="col-md-3 control-label">ชื่อภาษาอังกฤษ</p>
 								<div class="col-md-8"><input type="text" class="form-control" placeholder="Novel" name="eng" id="eng"></div>
 							</div>
+							<div class="form-group"><p class="col-md-3 control-label"></p>
+								<div class="col-md-8">
+									<div class="image-crop" style="display: none">
+										<img src="{{asset('/assets/img/p3.jpg')}}">
+									</div>
+									<div class="img-preview img-preview-sm"></div>
+								</div>
+							</div>
 							<div class="form-group"><p class="col-md-3 control-label">อัพโหลดรูปภาพ</p>
 								<div class="col-md-3">
 									<label title="Upload image file" for="inputImage" class="btn btn-info pull-left">
-										<input type="file" accept="image/*" name="file" id="inputImage" class="hide">
+										<input type="file" accept="image/*" name="image" id="inputImage" class="hide">
 										Browse
-									</label>
+									</label>								
 								</div>
 							</div>
+							<input type="hidden" name="id" id="id">
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 							<div class="text-right">
 								<div class="form-group">
@@ -213,8 +228,6 @@
 						</form>
 					</div>
 				</div>
-				<!-- <a onclick="nextBox();" class="btn btn-primary">Next</a> -->
-				<!-- <button type="button" class="btn btn-primary">OK</button> -->
 			</div>
 		</div>
 	</div>
@@ -223,6 +236,193 @@
 @stop
 
 @section('js')
+<!-- Image Preview & Crop -->
+<script>
+	$(document).ready(function() {
+		var $image = $(".image-crop > img")
+		$($image).cropper({
+			aspectRatio: 1.618,
+			preview: ".img-preview",
+			done: function(data) {
+				// Output the result data for cropping image.
+			}
+		});
+		var $inputImage = $("#inputImage");
+		if (window.FileReader) {
+			$inputImage.change(function() {
+				var fileReader = new FileReader(),
+					files = this.files,
+					file;
+				if (!files.length) {
+					return;
+				}
+				file = files[0];
+				if (/^image\/\w+$/.test(file.type)) {
+					fileReader.readAsDataURL(file);
+					fileReader.onload = function () {
+						$inputImage.val("");
+						$image.cropper("reset", true).cropper("replace", this.result);
+					};
+				} else {
+					showMessage("Please choose an image file.");
+				}
+			});
+		} else {
+			$inputImage.addClass("hide");
+		}
+		$("#download").click(function() {
+			window.open($image.cropper("getDataURL"));
+		});
+		$("#zoomIn").click(function() {
+			$image.cropper("zoom", 0.1);
+		});
+		$("#zoomOut").click(function() {
+			$image.cropper("zoom", -0.1);
+		});
+		$("#rotateLeft").click(function() {
+			$image.cropper("rotate", 45);
+		});
+		$("#rotateRight").click(function() {
+			$image.cropper("rotate", -45);
+		});
+		$("#setDrag").click(function() {
+			$image.cropper("setDragMode", "crop");
+		});
+		$('#data_1 .input-group.date').datepicker({
+			todayBtn: "linked",
+			keyboardNavigation: false,
+			forceParse: false,
+			calendarWeeks: true,
+			autoclose: true
+		});
+		$('#data_2 .input-group.date').datepicker({
+			startView: 1,
+			todayBtn: "linked",
+			keyboardNavigation: false,
+			forceParse: false,
+			autoclose: true
+		});
+		$('#data_3 .input-group.date').datepicker({
+			startView: 2,
+			todayBtn: "linked",
+			keyboardNavigation: false,
+			forceParse: false,
+			autoclose: true
+		});
+		$('#data_4 .input-group.date').datepicker({
+			minViewMode: 1,
+			keyboardNavigation: false,
+			forceParse: false,
+			autoclose: true,
+			todayHighlight: true
+		});
+		$('#data_5 .input-daterange').datepicker({
+			keyboardNavigation: false,
+			forceParse: false,
+			autoclose: true
+		});
+		var elem = document.querySelector('.js-switch');
+		var switchery = new Switchery(elem, { color: '#1AB394' });
+		var elem_2 = document.querySelector('.js-switch_2');
+		var switchery_2 = new Switchery(elem_2, { color: '#ED5565' });
+		var elem_3 = document.querySelector('.js-switch_3');
+		var switchery_3 = new Switchery(elem_3, { color: '#1AB394' });
+		$('.i-checks').iCheck({
+			checkboxClass: 'icheckbox_square-green',
+			radioClass: 'iradio_square-green',
+		});
+		$('.demo1').colorpicker();
+		var divStyle = $('.back-change')[0].style;
+		$('#demo_apidemo').colorpicker({
+			color: divStyle.backgroundColor
+		}).on('changeColor', function(ev) {
+			divStyle.backgroundColor = ev.color.toHex();
+		});
+	});
+	var config = {
+		'.chosen-select'           : {},
+		'.chosen-select-deselect'  : {allow_single_deselect:true},
+		'.chosen-select-no-single' : {disable_search_threshold:10},
+		'.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+		'.chosen-select-width'     : {width:"95%"}
+	}
+	for (var selector in config) {
+		$(selector).chosen(config[selector]);
+	}
+	$("#ionrange_1").ionRangeSlider({
+		min: 0,
+		max: 5000,
+		type: 'double',
+		prefix: "$",
+		maxPostfix: "+",
+		prettify: false,
+		hasGrid: true
+	});
+	$("#ionrange_2").ionRangeSlider({
+		min: 0,
+		max: 10,
+		type: 'single',
+		step: 0.1,
+		postfix: " carats",
+		prettify: false,
+		hasGrid: true
+	});
+	$("#ionrange_3").ionRangeSlider({
+		min: -50,
+		max: 50,
+		from: 0,
+		postfix: "°",
+		prettify: false,
+		hasGrid: true
+	});
+	$("#ionrange_4").ionRangeSlider({
+		values: [
+			"January", "February", "March",
+			"April", "May", "June",
+			"July", "August", "September",
+			"October", "November", "December"
+		],
+		type: 'single',
+		hasGrid: true
+	});
+	$("#ionrange_5").ionRangeSlider({
+		min: 10000,
+		max: 100000,
+		step: 100,
+		postfix: " km",
+		from: 55000,
+		hideMinMax: true,
+		hideFromTo: false
+	});
+	$(".dial").knob();
+	$("#basic_slider").noUiSlider({
+		start: 40,
+		behaviour: 'tap',
+		connect: 'upper',
+		range: {
+			'min':  20,
+			'max':  80
+		}
+	});
+	$("#range_slider").noUiSlider({
+		start: [ 40, 60 ],
+		behaviour: 'drag',
+		connect: true,
+		range: {
+			'min':  20,
+			'max':  80
+		}
+	});
+	$("#drag-fixed").noUiSlider({
+		start: [ 40, 60 ],
+		behaviour: 'drag-fixed',
+		connect: true,
+		range: {
+			'min':  20,
+			'max':  80
+		}
+	});
+</script>
 <!-- Page-Level Scripts -->
 <script>
 	$(document).ready(function() {
@@ -230,26 +430,11 @@
 			responsive: true,
 			"dom": 'T<"clear">lfrtip',
 			"tableTools": {
-				"sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+				"sSwfPath": "{{ asset('assets/js/plugins/dataTables/swf/copy_csv_xls_pdf.swf') }}"
 			}
 		});
 		/* Init DataTables */
 		var oTable = $('#editable').dataTable();
-		/* Apply the jEditable handlers to the table */
-		oTable.$('td').editable( '../example_ajax.php', {
-			"callback": function( sValue, y ) {
-				var aPos = oTable.fnGetPosition( this );
-				oTable.fnUpdate( sValue, aPos[0], aPos[1] );
-			},
-			"submitdata": function ( value, settings ) {
-				return {
-					"row_id": this.parentNode.getAttribute('id'),
-					"column": oTable.fnGetPosition( this )[2]
-				};
-			},
-			"width": "90%",
-			"height": "100%"
-		} );
 	});
 	function fnClickAddRow() {
 		$('#editable').dataTable().fnAddData([
@@ -286,9 +471,10 @@
 </script>
 <!-- Bootbox Edit Row -->
 <script>
-	function editRow(name, eng) {
-		$('#name').val(name);
-		$('#eng').val(eng);
+	function editRow(id, name, eng) {
+		$("#id").val(id);
+		$("#name").val(name);
+		$("#eng").val(eng);
 		$("#editModal").modal({			// wire up the actual modal functionality and show the dialog
 			"backdrop"  : "static",
 			"keyboard"  : true,

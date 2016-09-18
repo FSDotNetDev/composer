@@ -115,7 +115,7 @@
 							<td>{{ $banner[$key]['user_name'] }}</td>
 							<td style="width:50px;" align="center">
 								<a href="{{ URL::to('admin/banner/detail') }}"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
-								<a onclick="editRow('{{ $banner[$key]['banner_id'] }}', '{{ $banner[$key]['banner_name'] }}', '{{ $banner[$key]['banner_title'] }}', '{{ $banner[$key]['banner_link'] }}');"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+								<a onclick="editRow('{{ $banner[$key]['banner_id'] }}', '{{ $banner[$key]['banner_name'] }}', '{{ $banner[$key]['banner_title'] }}', '{{ $banner[$key]['banner_link'] }}', '{{ $banner[$key]['banner_image'] }}');"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
 								<a onclick="delRow('{{ $banner[$key]['banner_id'] }}')"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 							</td>
 						</tr>
@@ -151,12 +151,20 @@
 							<div class="form-group"><p class="col-md-3 control-label">ลิงก์</p>
 								<div class="col-md-8"><input type="text" class="form-control" placeholder="banner-2150" name="link"></div>
 							</div>
+							<div class="form-group"><p class="col-md-3 control-label"></p>
+								<div class="col-md-8">
+									<div class="image-crop" style="display: none">
+										<img src="{{asset('/assets/img/p3.jpg')}}">
+									</div>
+									<div class="img-preview img-preview-sm"></div>
+								</div>
+							</div>
 							<div class="form-group"><p class="col-md-3 control-label">อัพโหลดรูปภาพ</p>
 								<div class="col-md-3">
 									<label title="Upload image file" for="inputImage" class="btn btn-info pull-left">
-										<input type="file" accept="image/*" name="file" id="inputImage" class="hide">
+										<input type="file" accept="image/*" name="image" id="inputImage" class="hide">
 										Browse
-									</label>
+									</label>								
 								</div>
 							</div>
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -189,7 +197,7 @@
 			<div class="modal-footer">
 				<div class="row">
 					<div class="col-md-12">
-						<form class="form-horizontal" action="{{ URL::to('admin/banner/edit') }}" method="post">
+						<form class="form-horizontal" action="{{ URL::to('admin/banner/edit') }}" method="post" enctype="multipart/form-data">
 							<div class="form-group"><p class="col-md-3 control-label">ชื่อแบนเนอร์</p>
 								<div class="col-md-8"><input type="text" class="form-control" placeholder="Europe" name="name" id="name" autofocus></div>
 							</div>
@@ -199,12 +207,21 @@
 							<div class="form-group"><p class="col-md-3 control-label">ลิงก์</p>
 								<div class="col-md-8"><input type="text" class="form-control" placeholder="banner-2150" name="link" id="link"></div>
 							</div>
+							<div class="form-group"><p class="col-md-3 control-label"></p>
+								<div class="col-md-8">
+									<div class="image-crop" style="display: none">
+										<img src="{{asset('/assets/img/p3.jpg')}}">
+									</div>
+									<div class="img-preview img-preview-sm"></div>
+									<!-- <img id="image" width="200px" height="150px"> -->
+								</div>
+							</div>
 							<div class="form-group"><p class="col-md-3 control-label">อัพโหลดรูปภาพ</p>
 								<div class="col-md-3">
 									<label title="Upload image file" for="inputImage" class="btn btn-info pull-left">
-										<input type="file" accept="image/*" name="file" id="inputImage" class="hide">
+										<input type="file" accept="image/*" name="image" id="inputImage" class="hide">
 										Browse
-									</label>
+									</label>								
 								</div>
 							</div>
 							<input type="hidden" name="id" id="id">
@@ -228,6 +245,42 @@
 @stop
 
 @section('js')
+<!-- Image Preview & Crop -->
+<script>
+	$(document).ready(function() {
+		var $image = $(".image-crop > img")
+		$($image).cropper({
+			aspectRatio: 1.618,
+			preview: ".img-preview",
+			done: function(data) {
+				// Output the result data for cropping image.
+			}
+		});
+		var $inputImage = $("#inputImage");
+		if (window.FileReader) {
+			$inputImage.change(function() {
+				var fileReader = new FileReader(),
+					files = this.files,
+					file;
+				if (!files.length) {
+					return;
+				}
+				file = files[0];
+				if (/^image\/\w+$/.test(file.type)) {
+					fileReader.readAsDataURL(file);
+					fileReader.onload = function () {
+						$inputImage.val("");
+						$image.cropper("reset", true).cropper("replace", this.result);
+					};
+				} else {
+					showMessage("Please choose an image file.");
+				}
+			});
+		} else {
+			$inputImage.addClass("hide");
+		}
+	});
+</script>
 <!-- Page-Level Scripts -->
 <script>
 	$(document).ready(function() {
@@ -235,26 +288,11 @@
 			responsive: true,
 			"dom": 'T<"clear">lfrtip',
 			"tableTools": {
-				"sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+				"sSwfPath": "{{ asset('assets/js/plugins/dataTables/swf/copy_csv_xls_pdf.swf') }}"
 			}
 		});
 		/* Init DataTables */
 		var oTable = $('#editable').dataTable();
-		/* Apply the jEditable handlers to the table */
-		oTable.$('td').editable( '../example_ajax.php', {
-			"callback": function( sValue, y ) {
-				var aPos = oTable.fnGetPosition( this );
-				oTable.fnUpdate( sValue, aPos[0], aPos[1] );
-			},
-			"submitdata": function ( value, settings ) {
-				return {
-					"row_id": this.parentNode.getAttribute('id'),
-					"column": oTable.fnGetPosition( this )[2]
-				};
-			},
-			"width": "90%",
-			"height": "100%"
-		} );
 	});
 	function fnClickAddRow() {
 		$('#editable').dataTable().fnAddData([
@@ -291,11 +329,16 @@
 </script>
 <!-- Bootbox Edit Row -->
 <script>
-	function editRow(id, name, title, link) {
-		$('#id').val(id);
-		$('#name').val(name);
-		$('#title').val(title);
-		$('#link').val(link);
+	function editRow(id, name, title, link, image) {
+		var img = new Image();
+		img.src = "{{ URL::asset('media/banner') }}/" + image;
+		$("#image").attr("src", img.src);
+
+		$("#id").val(id);
+		$("#name").val(name);
+		$("#title").val(title);
+		$("#link").val(link);
+		$("#image").val(image);
 		$("#editModal").modal({			// wire up the actual modal functionality and show the dialog
 			"backdrop"  : "static",
 			"keyboard"  : true,
@@ -322,5 +365,5 @@
 
 		}
 	}	
-</script> 
+</script>
 @stop

@@ -265,26 +265,11 @@
 			responsive: true,
 			"dom": 'T<"clear">lfrtip',
 			"tableTools": {
-				"sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+				"sSwfPath": "{{ asset('assets/js/plugins/dataTables/swf/copy_csv_xls_pdf.swf') }}"
 			}
 		});
 		/* Init DataTables */
 		var oTable = $('#editable').dataTable();
-		/* Apply the jEditable handlers to the table */
-		oTable.$('td').editable( '../example_ajax.php', {
-			"callback": function( sValue, y ) {
-				var aPos = oTable.fnGetPosition( this );
-				oTable.fnUpdate( sValue, aPos[0], aPos[1] );
-			},
-			"submitdata": function ( value, settings ) {
-				return {
-					"row_id": this.parentNode.getAttribute('id'),
-					"column": oTable.fnGetPosition( this )[2]
-				};
-			},
-			"width": "90%",
-			"height": "100%"
-		} );
 	});
 	function fnClickAddRow() {
 		$('#editable').dataTable().fnAddData([
@@ -309,11 +294,11 @@
 <!-- Bootbox Edit Row -->
 <script>
 	function editRow(id, name, type, category, page, status) {
-		$('#id').val(id);
-		$('#name').val(name);
-		$('#type').val(type);
-		$('#category').val(category);
-		$('#page').val(page);
+		$("#id").val(id);
+		$("#name").val(name);
+		$("#type").val(type);
+		$("#category").val(category);
+		$("#page").val(page);
 		// $('#status').val(status);
 	   	$("#editModal").modal({			// wire up the actual modal functionality and show the dialog
 	      	"backdrop"  : "static",

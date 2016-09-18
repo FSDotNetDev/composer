@@ -43,6 +43,48 @@ class PublisherController extends Controller
 
 	}
 
+	public function add()
+	{
+		$name = Input::get('name');
+
+		try {
+
+			$addPublisher = DB::table('publisher')->insertGetId(array(
+				'publisher_name'	=> $name,
+				'user_update'		=> Session::get('user_id')
+			));
+			
+		} catch (Exception $e) {
+			return 'false';
+		}
+
+		return (Session::has('user_id') ? Redirect::to('admin/publisher') : Redirect::to('admin/login'));
+	}
+
+	public function edit()
+	{
+		$name 	= Input::get('name');
+		$id 	= Input::get('id');
+
+		try {
+
+			$editPublisher = DB::table('publisher')->where('publisher_id', '=', $id)->update(array(
+				'publisher_name'	=> $name,
+				'user_update' 		=> Session::get('user_id')
+			));
+			
+		} catch (Exception $e) {
+			return 'false';
+		}
+
+		return (Session::has('user_id') ? Redirect::to('admin/publisher') : Redirect::to('admin/login'));
+	}
+
+	public function del()
+	{
+		
+	}
+
 	public function book_count($publisher_id)
 	{
 		$book = DB::table('book')->select(DB::raw('

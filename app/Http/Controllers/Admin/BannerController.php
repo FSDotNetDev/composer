@@ -78,9 +78,7 @@ class BannerController extends Controller
 
 		try {
 
-			$editBanner = DB::table('banner')
-			->where('banner_id', '=', $id)
-			->update(array(
+			$editBanner = DB::table('banner')->where('banner_id', '=', $id)->update(array(
 				'banner_name'	=> $name,
 				'banner_title'	=> $title,
 				'banner_link'	=> $link,

@@ -113,7 +113,7 @@
 							<td>{{ $publisher[$key]['user_name'] }}</td>
 							<td style="width:50px;" align="center">
 								<a href="{{ URL::to('admin/publisher/detail') }}"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
-								<a onclick="editRow('{{ $publisher[$key]['publisher_name'] }}', '{{ $publisher[$key]['publisher_image'] }}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+								<a onclick="editRow('{{ $publisher[$key]['publisher_id'] }}', '{{ $publisher[$key]['publisher_name'] }}', '{{ $publisher[$key]['publisher_image'] }}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
 								<a href="{{ URL::to('admin/publisher/delete') }}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 							</td>
 						</tr>
@@ -139,7 +139,7 @@
 			<div class="modal-footer">
 				<div class="row">
 					<div class="col-md-12">
-						<form class="form-horizontal">
+						<form class="form-horizontal" action="{{ URL::to('admin/publisher/add') }}" method="post">
 							<div class="form-group"><p class="col-md-3 control-label">ชื่อสำนักพิทพ์</p>
 								<div class="col-md-8"><input type="text" class="form-control" placeholder="ALURE" name="name"></div>
 							</div>
@@ -151,6 +151,7 @@
 									</label>
 								</div>
 							</div>
+							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 							<div class="form-group">      						
 								<div class="text-right">
 									<div class="col-md-11">
@@ -162,8 +163,6 @@
 						</form>
 					</div>
 				</div>
-				<!-- <a onclick="nextBox();" class="btn btn-primary">Next</a> -->
-				<!-- <button type="button" class="btn btn-primary">OK</button> -->
 			</div>
 		</div>
 	</div>
@@ -175,14 +174,14 @@
 		<div class="modal-content">
 			<!-- dialog body -->
 			<div class="modal-body">
-				<label>Add Publisher</label>
+				<label>Edit Publisher</label>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<!-- dialog buttons -->
 			<div class="modal-footer">
 				<div class="row">
 					<div class="col-md-12">
-						<form class="form-horizontal">
+						<form class="form-horizontal" action="{{ URL::to('admin/publisher/edit') }}" method="post">
 							<div class="form-group"><p class="col-md-3 control-label">ชื่อสำนักพิทพ์</p>
 								<div class="col-md-8"><input type="text" class="form-control" placeholder="ALURE" name="name" id="name"></div>
 							</div>
@@ -194,6 +193,8 @@
 									</label>
 								</div>
 							</div>
+							<input type="hidden" name="id" id="id">
+							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 							<div class="form-group">
 								<div class="text-right">
 									<div class="col-md-11">
@@ -205,8 +206,6 @@
 						</form>
 					</div>
 				</div>
-				<!-- <a onclick="nextBox();" class="btn btn-primary">Next</a> -->
-				<!-- <button type="button" class="btn btn-primary">OK</button> -->
 			</div>
 		</div>
 	</div>
@@ -222,26 +221,11 @@
 			responsive: true,
 			"dom": 'T<"clear">lfrtip',
 			"tableTools": {
-				"sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+				"sSwfPath": "{{ asset('assets/js/plugins/dataTables/swf/copy_csv_xls_pdf.swf') }}"
 			}
 		});
 		/* Init DataTables */
 		var oTable = $('#editable').dataTable();
-		/* Apply the jEditable handlers to the table */
-		oTable.$('td').editable( '../example_ajax.php', {
-			"callback": function( sValue, y ) {
-				var aPos = oTable.fnGetPosition( this );
-				oTable.fnUpdate( sValue, aPos[0], aPos[1] );
-			},
-			"submitdata": function ( value, settings ) {
-				return {
-					"row_id": this.parentNode.getAttribute('id'),
-					"column": oTable.fnGetPosition( this )[2]
-				};
-			},
-			"width": "90%",
-			"height": "100%"
-		} );
 	});
 	function fnClickAddRow() {
 		$('#editable').dataTable().fnAddData([
@@ -278,9 +262,9 @@
 </script>
 <!-- Edit Row -->
 <script>
-	function editRow(name, image) {
+	function editRow(id, name, image) {
+		$("#id").val(id);
 		$("#name").val(name);
-		// $("#image").val(image);
 		$("#editModal").modal({			// wire up the actual modal functionality and show the dialog
 			"backdrop"  : "static",
 			"keyboard"  : true,
