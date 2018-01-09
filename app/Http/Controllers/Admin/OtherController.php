@@ -59,13 +59,39 @@ class OtherController extends Controller
 		return (Session::has('user_id') ? View::make('admin.other.empty_page') : Redirect::to('admin/login'));
 	}
 
+	public function add()
+	{
+		/*$username = Input::post('user_login');
+		$password = Input::post('user_password');
+		$email = Input::post('user_email');
+
+		$salt = substr(md5(microtime()),rand(0,26),16);
+
+		return $username;*/return 'true';
+
+		/*try {
+
+			$addAccount = DB::table('user')->insertGetId(array(
+				'user_login'	=> $username,
+				'user_password'	=> $password,
+				'user_email'	=> $email,
+				'user_salt'		=> $salt
+			));
+			
+		} catch (Exception $e) {
+			return 'false';
+		}
+
+		return Redirect::to('admin/login');*/
+	}
+
 	public function check_username()
 	{
 		$user_login = Input::get('user_login');return $user_login;
-		/*$user = DB::table('user')->select(DB::raw('*'))
+		$user = DB::table('user')->select(DB::raw('*'))
 		->join('user', 'user.user_login', '=', $user_login)
 		->get();
 
-		return ($user ? View::make('admin.other.login') : Redirect::to('admin/login'));*/
-	}   
+		return ($user ? View::make('admin.other.login') : Redirect::to('admin/login'));
+	}
 }

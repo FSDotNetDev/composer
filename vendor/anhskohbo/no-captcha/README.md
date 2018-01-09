@@ -7,17 +7,9 @@ No CAPTCHA reCAPTCHA [![Build Status](https://travis-ci.org/anhskohbo/no-captcha
 
 ## Installation
 
-Add the following line to the `require` section of `composer.json`:
-
-```json
-{
-    "require": {
-        "anhskohbo/no-captcha": "2.*"
-    }
-}
 ```
-
-Run `composer update`.
+composer require anhskohbo/no-captcha
+```
 
 ## Laravel 5
 
@@ -31,11 +23,11 @@ Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
 
 ### Configuration
 
-Add `NOCAPTCHA_SECRET` and `NOCAPTCHA_SITEKEY` in **.env** file:
+Add `NOCAPTCHA_SECRET` and `NOCAPTCHA_SITEKEY` in **.env** file (without brackets):
 
 ```
-NOCAPTCHA_SECRET=[secret-key]
-NOCAPTCHA_SITEKEY=[site-key]
+NOCAPTCHA_SECRET=secret-key
+NOCAPTCHA_SITEKEY=site-key
 ```
 
 ### Usage
@@ -44,6 +36,12 @@ NOCAPTCHA_SITEKEY=[site-key]
 
 ```php
 {!! app('captcha')->display(); !!}
+```
+
+With custom attributes and language support:
+
+```
+{!! app('captcha')->display($attributes = [], $lang = null); !!}
 ```
 
 ##### Validation
@@ -60,7 +58,7 @@ $validate = Validator::make(Input::all(), [
 
 ### Testing
 
-When using the (Laravel Testing functionality)[http://laravel.com/docs/5.1/testing], you will need to mock out the response for the captcha form element. To do this:
+When using the [Laravel Testing functionality](http://laravel.com/docs/5.1/testing), you will need to mock out the response for the captcha form element. To do this:
 
 1) Setup NoCaptcha facade in config/app.conf
 

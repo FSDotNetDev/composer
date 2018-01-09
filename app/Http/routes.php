@@ -125,6 +125,11 @@ Route::get('admin/login','Admin\LoginController@login');
 Route::get('admin/login/logout','Admin\LoginController@logout');
 Route::post('admin/login/check','Admin\LoginController@check');
 
+/*----------  Time-Based 2FA  ----------*/
+
+Route::get('admin/tfa','Admin\TFAController@index');
+Route::post('admin/tfa/check','Admin\TFAController@check');
+
 /*----------  Dashboard  ----------*/
 
 Route::get('admin/index','Admin\IndexController@index');
@@ -229,6 +234,7 @@ Route::get('admin/invoice','Admin\OtherController@invoice');
 Route::get('admin/login_two_columns','Admin\OtherController@login_two_columns');
 Route::get('admin/register','Admin\OtherController@register');
 Route::post('admin/register/check/username','Admin\OtherController@check_username');
+Route::post('admin/register/add','Admin\OtherController@add');
 Route::get('admin/error404','Admin\OtherController@error404');
 Route::get('admin/error500','Admin\OtherController@error500');
 Route::get('admin/empty_page','Admin\OtherController@empty_page');
@@ -450,3 +456,7 @@ Route::get('/home', 'HomeController@index');
 
 Route::get('site-register', 'Auth\AuthController@siteRegister');
 Route::post('site-register', 'Auth\AuthController@siteRegisterPost');
+
+Route::auth();
+
+Route::get('/home', 'HomeController@index');

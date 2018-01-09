@@ -7,7 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Thrift' => array($vendorDir . '/evernote/evernote-cloud-sdk-php/src'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
     'JakubOnderka\\PhpConsoleHighlighter' => array($vendorDir . '/jakub-onderka/php-console-highlighter/src'),
@@ -15,5 +14,5 @@ return array(
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),
     'Evernote' => array($vendorDir . '/evernote/evernote-cloud-sdk-php/src'),
     'Doctrine\\Common\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib'),
-    'Cron' => array($vendorDir . '/mtdowling/cron-expression/src'),
+    'BaconQrCode' => array($vendorDir . '/bacon/bacon-qr-code/src'),
 );

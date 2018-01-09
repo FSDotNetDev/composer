@@ -23,38 +23,42 @@ class LoginController extends Controller
 	{
 		$username = Input::get('user_login');
 		$password = Input::get('user_password');
+
+		$salt = DB::table('user')->select(DB::raw('user_salt'))
+		->where('user.user_login', '=', trim($username))
+		->get();
 		
 		$login = DB::table('user')->select(DB::raw('*, authority.authority_name'))
 		->leftjoin('authority', 'authority.authority_id', '=', 'user.authority_id')
 		->where('user.user_login', '=', trim($username))
-		->where('user.User_password', '=', sha1(trim($password)))
+		->where('user.User_password', '=', sha1(trim($password) . $salt[0]->user_salt))
 		->where('user.authority_id', '!=', '3')
 		->get();
 
-		if (!empty($login)) {
+		if ($login[0]->user_tfa == 0) {
 
-			foreach ($login as $value) {
-				Session::put('user_id', $value->user_id);
-				Session::put('user_login', $value->user_login);            
-				Session::put('user_name', $value->user_name);
-				Session::put('user_surname', $value->user_surname);
-				Session::put('user_sex', $value->user_sex);
-				Session::put('user_birthday', $value->user_birthday);
-				Session::put('user_address', $value->user_address);
-				Session::put('user_email', $value->user_email);
-				Session::put('user_phone', $value->user_phone);
-				Session::put('user_image', $value->user_image);
-				Session::put('user_authority', $value->authority_name);
-			}
+			Session::put('user_id', $login[0]->user_id);
+			Session::put('user_login', $login[0]->user_login);            
+			Session::put('user_name', $login[0]->user_name);
+			Session::put('user_surname', $login[0]->user_surname);
+			Session::put('user_sex', $login[0]->user_sex);
+			Session::put('user_birthday', $login[0]->user_birthday);
+			Session::put('user_address', $login[0]->user_address);
+			Session::put('user_email', $login[0]->user_email);
+			Session::put('user_phone', $login[0]->user_phone);
+			Session::put('user_image', $login[0]->user_image);
+			Session::put('user_authority', $login[0]->authority_name);
 
-		}
+			// var_dump(PHP_OS);
+			// php_uname();
 
-		// var_dump(PHP_OS);
-		// php_uname();
+			$addLog = DB::table('log')->insertGetId(array('user_id' => Session::get('user_id'), 'log_platform' => $_SERVER['HTTP_USER_AGENT'], 'ip_address' => $_SERVER['REMOTE_ADDR']));
 
-		$addLog = DB::table('log')->insertGetId(array('user_id' => Session::get('user_id'), 'log_platform' => $_SERVER['HTTP_USER_AGENT'], 'ip_address' => $_SERVER['REMOTE_ADDR']));
+			//return Redirect::to('admin/index');
 
-		return (!empty($login) ? Redirect::to('admin/index') : Redirect::to('admin/login'));
+		}	
+
+		return $login[0]->user_id;
 	}
 
 	public function logout()
@@ -70,7 +74,7 @@ class LoginController extends Controller
 
 		if ($user) {
 			
-			$token = md5(uniqid(mt_rand()));         
+			$token = md5(uniqid(mt_rand()));
 
 			$token = md5(uniqid(mt_rand()."mbookstore ระบบอ่านหนังสือออนไลน์", true));
 			$date_create = date('Y-m-d H:i:s');

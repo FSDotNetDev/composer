@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 
 use App\Http\Controllers\Controller;
+use PragmaRX\Google2FA\Google2FA;
 
 class ProfileController extends Controller 
 {
@@ -27,7 +28,35 @@ class ProfileController extends Controller
 		->orderBy('date_create', 'asc')
 		->get();
 
-		return (Session::has('user_id') ? View::make('admin.profile.profile')->with('profile', $profile)->with('dolist', $dolist) : Redirect::to('admin/login'));
+		$google2fa = new Google2FA();
+    	$user_key = DB::table('user')->select(DB::raw('user_key'))->where('user_id', '=', Session::get('user_id'))->get();
+    	$twofa = DB::table('user')->select(DB::raw('user_tfa'))->where('user_id', '=', Session::get('user_id'))->get();
+    	$secret_key = decrypt($user_key[0]->user_key);
+
+		if (empty($secret_key)) {
+
+			$secret_key = $google2fa->generateSecretKey();
+			$user_key = encrypt($secret_key);
+
+			try {
+
+				$editSecretKey = DB::table('user')->where('user_id', '=', Session::get('user_id'))->update(array(
+					'user_key' => $user_key
+				));
+				
+			} catch (Exception $e) {
+				return 'false';
+			}
+
+		}
+
+    	$qrcode = $google2fa->getQRCodeGoogleUrl(
+		    'CI+',
+		    Session::get('user_email'),
+		    $secret_key
+		);
+
+		return (Session::has('user_id') ? View::make('admin.profile.profile')->with('profile', $profile)->with('dolist', $dolist)->with('qrcode', $qrcode)->with('twofa', $twofa[0]->user_tfa) : Redirect::to('admin/login'));
 	 }
 
 	public function edit_profile() 

@@ -52,6 +52,26 @@
 							</div>
 						</div>
 					</div>
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>Account Security</h5>
+							<div class="ibox-tools">
+								<a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-wrench"></i></a>
+								<ul class="dropdown-menu dropdown-user">
+									<li><a href="#">Config option 1</a></li>
+									<li><a href="#">Config option 2</a></li>
+								</ul>
+								<a class="close-link"><i class="fa fa-times"></i></a>
+							</div>
+						</div>
+						<div class="ibox-content">
+							<h3>Two Factor Authentication</h3>
+							<p>Enable Two Factor</p>
+							<input type="checkbox" class="js-switch" name="invisible" id="invisible" onchange="invisible()" onload="status();" checked />
+							<div class="text-center"><img name="qrcode" id="qrcode" src="{{ $qrcode }}"></div>
+						</div>
+					</div>
 					<div class="ibox-title">
 						<h5>Small todo list</h5>
 						<div class="ibox-tools">
@@ -225,5 +245,41 @@
 	function change() {
 		window.location.href = "{{ URL::to('admin/profile/edit') }}";
 	}
+	$(document).ready(function() {
+		var elem = document.querySelector('.js-switch');
+		var switchery = new Switchery(elem, { color: '#1AB394' });
+	});
+	function invisible() {
+		var val = document.getElementById("invisible").value;
+	  	if (val == 'on') {
+	  		document.getElementById("invisible").value = 'off';
+	    	$("#qrcode").hide();
+		} else {
+			document.getElementById("invisible").value = 'on';
+	    	$("#qrcode").show();
+		}
+	}
+	function onload() {
+		var val = document.getElementById("invisible").value;
+	  	if (val == 'on') {
+	  		document.getElementById("invisible").value = 'off';
+	    	$("#qrcode").hide();
+	    	//alert("aa");
+		} else {
+			document.getElementById("invisible").value = 'on';
+	    	$("#qrcode").show();
+	    	//alert("bb");
+		}
+	}
+
+	/*function invisible(oCheckbox) {
+    	var checkbox_val = oCheckbox.value;
+    	if (oCheckbox.checked == true) {
+        	alert("Checkbox with name = " + oCheckbox.name + " and value =" + checkbox_val + " is checked");
+    	} else {
+        	alert("Checkbox with name = " + oCheckbox.name + " and value =" + checkbox_val + " is not checked");
+    	}
+	}*/
+
 </script>
 @stop

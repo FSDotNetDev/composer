@@ -5,10 +5,10 @@
 		<div><h1 class="logo-name">JD+</h1></div>
 		<h3>Register to JD+</h3>
 		<p>Create account to see it in action.</p>
-		<form class="m-t" role="form" action="login">
-			<div class="form-group"><input type="text" class="form-control" placeholder="Username" required="" id="username"></div>
-			<div class="form-group"><input type="email" class="form-control" placeholder="Email" required="" id="email"></div>
-			<div class="form-group"><input type="password" class="form-control" placeholder="Password" required="" id="password"></div>
+		<form class="m-t" role="form" action="register/add" method="post">
+			<div class="form-group"><input type="text" name="user_login" class="form-control" placeholder="Username" required="" id="username"></div>
+			<div class="form-group"><input type="email" name="user_email" class="form-control" placeholder="Email" required="" id="email"></div>
+			<div class="form-group"><input type="password" name="user_password" class="form-control" placeholder="Password" required="" id="password"></div>
 			<div class="form-group"><div class="checkbox i-checks"><label><input type="checkbox"><i></i> &emsp; Agree the terms and policy </label></div></div>
 			<input type="button" class="btn btn-primary block full-width m-b" id="username_availability" value="Check">
 			<div id='status'></div>
